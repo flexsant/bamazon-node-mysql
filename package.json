@@ -1,8 +1,8 @@
 {
   "name": "bamazon-node-mysql",
   "version": "1.0.0",
-  "description": "",
-  "main": "bamazonCustomer.js",
+  "description": "## Summary Bamazon takes in orders from customers and deplete stock from the store's inventory.",
+  "main": "bamazon.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -18,6 +18,6 @@
   },
   "homepage": "https://github.com/flexsant/bamazon-node-mysql#readme",
   "dependencies": {
-    "inquire": "^0.4.8"
+    "inquirer": "^7.0.0"
   }
 }
