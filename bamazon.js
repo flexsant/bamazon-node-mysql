@@ -27,46 +27,52 @@ function inventoryDisplay() {
     if (err) throw err;
 
     var table = new Table({
-      chars: {
-        'top': '═', 'top-mid': '╤', 'top-left': '╔', 'top-right': '╗'
-        , 'bottom': '═', 'bottom-mid': '╧', 'bottom-left': '╚', 'bottom-right': '╝'
-        , 'left': '║', 'left-mid': '╟', 'mid': '─', 'mid-mid': '┼'
-        , 'right': '║', 'right-mid': '╢', 'middle': '│'
-      }
+
+      head: ["Product ID", "Product Name", "Department Name", "Price", "Stock Quantity"]
+      , colWidths: [15, 30, 20, 10, 20]
     });
 
-    table.push(
-      ["Product ID", "Product Name", "Department Name", "Price", "Stock Quantity"])
+    for (var i = 0; i < res.length; i++) {
+      table.push(
 
-      for (var i= 0; i < res.length; i ++) {
-    table.push(
-      
-      [res[i].id, res[i].product_name, res[i].department_name, res[i].price, res[i].stock_quantity]
-    );
-  }
-      
+        [res[i].id, res[i].product_name, res[i].department_name, res[i].price, res[i].stock_quantity]
+      );
+    }
+
     console.log(table.toString());
 
     start();
   });
 
-function start() {
-  inquirer
-    .prompt([
-      {
-        name: "product",
-        type: "number",
-        message: "What is the ID of the product you would like to buy?",
-      },
-      {
-        name: "quantity",
-        type: "number",
-        message: "How many units of the product would you like to buy?",
-      }
-    ]).then(function (answer) {
+  function start() {
+    inquirer
+      .prompt([
+        {
+          name: "product",
+          type: "number",
+          message: "What is the ID of the product you would like to buy?",
+        }
 
-    })
-}};
+      ]).then(function (answer1) {
+        connection.query(`SELECT * FROM products WHERE id = ${}`,
+        function (err, res) {
+        console.log(answer1);
+        console.log(err);
+        console.log(res);
+        })
+      })
+
+    //   {
+    //     name: "quantity",
+    //     type: "number",
+    //     message: "How many units of the product would you like to buy?",
+    //   }
+    // ]).then(function (answer) {
+
+    // })
+  }
+
+};
 
 // func() that logs a phrase like Insufficient quantity!, and then prevent the order from going through.
 
