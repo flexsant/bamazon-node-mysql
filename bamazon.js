@@ -48,17 +48,21 @@ function inventoryDisplay() {
     inquirer
       .prompt([
         {
-          name: "product",
+          name: "id",
           type: "number",
           message: "What is the ID of the product you would like to buy?",
         }
 
       ]).then(function (answer1) {
-        connection.query(`SELECT * FROM products WHERE id = ${}`,
+        connection.query(`SELECT * FROM products WHERE ?`, {id: answer1.id},
         function (err, res) {
-        console.log(answer1);
-        console.log(err);
-        console.log(res);
+          if (res.length > 0) {
+            console.log(res) 
+          }
+         else {
+           console.log("ID does not exist, please select one from the inventory")
+         }
+        // console.log(err);
         })
       })
 
@@ -71,7 +75,6 @@ function inventoryDisplay() {
 
     // })
   }
-
 };
 
 // func() that logs a phrase like Insufficient quantity!, and then prevent the order from going through.
