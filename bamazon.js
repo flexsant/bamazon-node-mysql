@@ -1,6 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
-
+var Table = require('cli-table');
 // create the connection information for the sql database
 var connection = mysql.createConnection({
   host: "localhost",
@@ -40,16 +40,13 @@ function inventoryDisplay() {
 
       for (var i= 0; i < res.length; i ++) {
     table.push(
-      [results[i].id, results[i].product_name, results[i].department_name, results[i].price, results[i].stock_quantity]
-    )}
       
-
-
+      [res[i].id, res[i].product_name, res[i].department_name, res[i].price, res[i].stock_quantity]
+    );
+  }
+      
     console.log(table.toString());
 
-    // for (var i = 0; i < res.length; i ++) {
-    // console.log(res[i].id + " | " + res[i].product_name + " | " + res[i].department_name + " | " + res[i].price + " | " + res[i].stock_quantity);
-    // }
     start();
   });
 
@@ -68,6 +65,13 @@ function start() {
       }
     ]).then(function (answer) {
 
-
     })
-}
+}};
+
+// func() that logs a phrase like Insufficient quantity!, and then prevent the order from going through.
+
+// fulfill the customer's order.
+
+// This means updating the SQL database to reflect the remaining quantity.
+
+// Once the update goes through, show the customer the total cost of their purchase.
