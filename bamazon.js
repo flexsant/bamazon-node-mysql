@@ -25,10 +25,10 @@ var totalPrice;
 
 connection.connect(function (err) {
   if (err) throw err;
-  // run the start function after the connection is made to prompt the user
+  // Run the start function after the connection is made to prompt the user
   inventoryDisplay();
 });
-
+// Function displays the cli-table and starts inquirer prompting user
 function inventoryDisplay() {
   connection.query("SELECT * FROM products", function (err, res) {
     if (err) throw err;
@@ -51,75 +51,71 @@ function inventoryDisplay() {
     start();
   });
 };
-  function start() {
-    inquirer
-      .prompt([
-        {
-          name: "id",
-          type: "number",
-          message: "What is the ID of the product you would like to buy?",
-        },
-        {
-          name: "quantity",
-          type: "number",
-          message: "How many units of the product would you like to buy?",
+function start() {
+  inquirer
+    .prompt([
+      {
+        name: "id",
+        type: "number",
+        message: "What is the ID of the product you would like to buy?",
+      },
+      {
+        name: "quantity",
+        type: "number",
+        message: "How many units of the product would you like to buy?",
+      }
+
+    ]).then(function (answer) {
+      item = answer.id;
+      quantity = answer.quantity;
+      console.log("You would like to purchase " + quantity + " of item number " + item);
+      inventory();
+    })
+};
+// Function that checks inventory for available stock quantity.
+function inventory() {
+  connection.query(`SELECT * FROM products WHERE ?`, { id: item },
+
+    function (err, res) {
+      console.log(res);
+      stockQuantity = res[0].stock_quantity;
+      itemPrice = res[0].price;
+      if (res.length > 0) {
+        if (stockQuantity < quantity) {
+          // Logs a phrase like Insufficient quantity!, and then prevent the order from going through.
+          console.log("Not enough quantity");
+          inventoryDisplay();
         }
-
-      ]).then(function (answer) {
-        item = answer.id;
-        quantity = answer.quantity;
-        console.log("You would like to purchase " + quantity + " of item number " + item);
-        inventory();
-      })
-  };
-  // Function that checks inventory for available stock quantity.
-  function inventory() {
-    connection.query(`SELECT * FROM products WHERE ?`, { id: item },
-
-      function (err, res) {
-        console.log(res);
-        stockQuantity = res[0].stock_quantity;
-        itemPrice = res[0].price;
-        if (res.length > 0) {
-          if (stockQuantity < quantity) {
-            // Logs a phrase like Insufficient quantity!, and then prevent the order from going through.
-            console.log("Not enough quantity");
-            inventoryDisplay();
-          }
-          else {
-            fulfill(stockQuantity, quantity);
-            console.log()
-          }
-        } else {
-          console.log("ID does not exist, please select one from inventory.")
+        else {
+          fulfill(stockQuantity, quantity);
+          console.log()
         }
-      })
-  };
+      } else {
+        console.log("ID does not exist, please select one from inventory.")
+      }
+    })
+};
 
-  // Function fulfills the customer's order.
-  function fulfill(stockQuantity, quantity) {
-    updatedStock = stockQuantity - quantity;
+// Function fulfills the customer's order.
+function fulfill(stockQuantity, quantity) {
+  updatedStock = stockQuantity - quantity;
 
-    // This means updating the SQL database to reflect the remaining quantity
-    connection.query("UPDATE products SET ? WHERE ?", [{
-      stock_quantity: updatedStock
-    }, { id: item }],
+  // This means updating the SQL database to reflect the remaining quantity
+  connection.query("UPDATE products SET ? WHERE ?", [{
+    stock_quantity: updatedStock
+  }, { id: item }],
 
-      function (err, res) {
-        if (err) {
-          console.log(err);
-        } else {
-          // Once the update goes through, show the customer the total cost of their purchase.
-          console.log("Order made");
-          console.log("Id: " + item);
-          console.log("Quantity: " + quantity);
-          totalPrice = quantity * itemPrice;
-          console.log("Total Cost: " + totalPrice.toFixed(2))
-        }
-        inventoryDisplay();
-      });
-  };
-
-// This means updating the SQL database to reflect the remaining quantity.
-
-// Once the update goes through, show the customer the total cost of their purchase.
+    function (err, res) {
+      if (err) {
+        console.log(err);
+      } else {
+        // Once the update goes through, show the customer the total cost of their purchase.
+        console.log("Order made");
+        console.log("Id: " + item);
+        console.log("Quantity: " + quantity);
+        totalPrice = quantity * itemPrice;
+        console.log("Total Cost: " + totalPrice.toFixed(2))
+      }
+      inventoryDisplay();
+    });
+};
