@@ -75,6 +75,7 @@ function inventoryDisplay() {
 
   function inventory() {
     connection.query(`SELECT * FROM products WHERE ?`, { id: item },
+
       function (err, res) {
         console.log(res);
         stockQuantity = res[0].stock_quantity;
@@ -85,14 +86,39 @@ function inventoryDisplay() {
             console.log("Not enough quantity");
             inventoryDisplay();
           }
+          else {
+            fulfill(stockQuantity, quantity);
+            console.log()
+          }
+        } else {
+          console.log("ID does not exist, please select one from inventory.")
         }
-      }
-    )
+      })
+  };
+
+  // Fulfill the customer's order.
+  function fulfill(stockQuantity, quantity) {
+    updatedStock = stockQuantity - quantity;
+
+    // This means updating the SQL database to reflect the remaining qu
+    connection.query("UPDATE products SET ? WHERE ?", [{
+      stock_quantity: updatedStock
+    }, { id: item }],
+
+      function (err, res) {
+        if (err) {
+          console.log(err);
+        } else {
+          // Once the update goes through, show the customer the total cost of their purchase.
+          console.log("Order made");
+          console.log("Id: " + item);
+          console.log("Quantity: " + quantity);
+          totalPrice = quantity * itemPrice;
+          console.log("Total Cost: " + totalPrice.toFixed(2))
+        }
+        inventoryDisplay();
+      });
   }
-
-// func() that logs a phrase like Insufficient quantity!, and then prevent the order from going through.
-
-// fulfill the customer's order.
 
 // This means updating the SQL database to reflect the remaining quantity.
 
