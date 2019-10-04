@@ -50,7 +50,7 @@ function inventoryDisplay() {
 
     start();
   });
-
+};
   function start() {
     inquirer
       .prompt([
@@ -72,7 +72,7 @@ function inventoryDisplay() {
         inventory();
       })
   };
-
+  // Function that checks inventory for available stock quantity.
   function inventory() {
     connection.query(`SELECT * FROM products WHERE ?`, { id: item },
 
@@ -96,11 +96,11 @@ function inventoryDisplay() {
       })
   };
 
-  // Fulfill the customer's order.
+  // Function fulfills the customer's order.
   function fulfill(stockQuantity, quantity) {
     updatedStock = stockQuantity - quantity;
 
-    // This means updating the SQL database to reflect the remaining qu
+    // This means updating the SQL database to reflect the remaining quantity
     connection.query("UPDATE products SET ? WHERE ?", [{
       stock_quantity: updatedStock
     }, { id: item }],
@@ -118,7 +118,7 @@ function inventoryDisplay() {
         }
         inventoryDisplay();
       });
-  }
+  };
 
 // This means updating the SQL database to reflect the remaining quantity.
 
