@@ -15,6 +15,13 @@ var connection = mysql.createConnection({
   password: "password",
   database: "bamazon_DB"
 });
+// Variables to store results from prompts
+var item;
+var quantity;
+var updatedStock;
+var stockQuantity;
+var itemPrice;
+var totalPrice;
 
 connection.connect(function (err) {
   if (err) throw err;
@@ -51,31 +58,37 @@ function inventoryDisplay() {
           name: "id",
           type: "number",
           message: "What is the ID of the product you would like to buy?",
+        },
+        {
+          name: "quantity",
+          type: "number",
+          message: "How many units of the product would you like to buy?",
         }
 
-      ]).then(function (answer1) {
-        connection.query(`SELECT * FROM products WHERE ?`, {id: answer1.id},
-        function (err, res) {
-          if (res.length > 0) {
-            console.log(res) 
-          }
-         else {
-           console.log("ID does not exist, please select one from the inventory")
-         }
-        // console.log(err);
-        })
+      ]).then(function (answer) {
+        item = answer.id;
+        quantity = answer.quantity;
+        console.log("You would like to purchase " + quantity + " of item number " + item);
+        inventory();
       })
+  };
 
-    //   {
-    //     name: "quantity",
-    //     type: "number",
-    //     message: "How many units of the product would you like to buy?",
-    //   }
-    // ]).then(function (answer) {
-
-    // })
+  function inventory() {
+    connection.query(`SELECT * FROM products WHERE ?`, { id: item },
+      function (err, res) {
+        console.log(res);
+        stockQuantity = res[0].stock_quantity;
+        itemPrice = res[0].price;
+        if (res.length > 0) {
+          if (stockQuantity < quantity) {
+            // Logs a phrase like Insufficient quantity!, and then prevent the order from going through.
+            console.log("Not enough quantity");
+            inventoryDisplay();
+          }
+        }
+      }
+    )
   }
-};
 
 // func() that logs a phrase like Insufficient quantity!, and then prevent the order from going through.
 
