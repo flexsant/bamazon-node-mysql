@@ -82,7 +82,7 @@ function inventory() {
       itemPrice = res[0].price;
       if (res.length > 0) {
         if (stockQuantity < quantity) {
-          // Logs a phrase like Insufficient quantity!, and then prevent the order from going through.
+          // Logs a phrase like Insufficient quantity!, and then prevents the order from going through.
           console.log("Not enough quantity");
           inventoryDisplay();
         }
@@ -100,7 +100,7 @@ function inventory() {
 function fulfill(stockQuantity, quantity) {
   updatedStock = stockQuantity - quantity;
 
-  // This means updating the SQL database to reflect the remaining quantity
+// This updates the SQL database to reflect the remaining quantity
   connection.query("UPDATE products SET ? WHERE ?", [{
     stock_quantity: updatedStock
   }, { id: item }],
